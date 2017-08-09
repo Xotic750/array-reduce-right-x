@@ -9,32 +9,32 @@
 
 'use strict';
 
-var nativeReduceRight = Array.prototype.reduceRight;
+var nativeReduce = Array.prototype.reduceRight;
 
 // ES5 15.4.4.22
 // http://es5.github.com/#x15.4.4.22
-// https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/reduceRightRight
+// https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/reduceRight
 var rRightCoercesToObject = false;
-if (nativeReduceRight) {
+if (nativeReduce) {
   try {
     // eslint-disable-next-line max-params
-    rRightCoercesToObject = typeof nativeReduceRight.call('es5', function (_, __, ___, list) {
+    rRightCoercesToObject = typeof nativeReduce.call('es5', function (_, __, ___, list) {
       return list;
     }) === 'object';
   } catch (ignore) {
-    nativeReduceRight = null;
+    nativeReduce = null;
   }
 }
 
 var $reduceRight;
-if (nativeReduceRight && rRightCoercesToObject) {
+if (nativeReduce && rRightCoercesToObject) {
   $reduceRight = function reduceRight(array, callBack /* , initialValue */) {
     var args = [callBack];
     if (arguments.length > 2) {
       args.push(arguments[2]);
     }
 
-    return nativeReduceRight.apply(array, args);
+    return nativeReduce.apply(array, args);
   };
 } else {
   // Check failure of by-index access of string characters (IE < 9)
@@ -104,9 +104,9 @@ if (nativeReduceRight && rRightCoercesToObject) {
  * @throws {TypeError} If array is null or undefined.
  * @throws {TypeError} If callBack is not a function.
  * @throws {TypeError} If called on an empty array without an initial value.
- * @return {*} The value that results from the reduction.
+ * @returns {*} The value that results from the reduction.
  * @example
- * var reduceRight = require('array-reduceRight-right-x');
+ * var reduceRight = require('array-reduce-right-x');
  *
  * var sum = reduceRight([0, 1, 2, 3], function (a, b) {
  *   return a + b;

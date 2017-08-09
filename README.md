@@ -50,7 +50,7 @@ array (from right-to-left) to reduce it to a single value..
 
 **Example**  
 ```js
-var reduceRight = require('array-reduceRight-right-x');
+var reduceRight = require('array-reduce-right-x');
 
 var sum = reduceRight([0, 1, 2, 3], function (a, b) {
   return a + b;
