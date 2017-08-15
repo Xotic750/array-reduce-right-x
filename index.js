@@ -1,6 +1,6 @@
 /**
  * @file Reduce an array (from right to left) to a single value.
- * @version 1.2.0
+ * @version 1.3.0
  * @author Xotic750 <Xotic750@gmail.com>
  * @copyright  Xotic750
  * @license {@link <https://opensource.org/licenses/MIT> MIT}
@@ -10,6 +10,7 @@
 'use strict';
 
 var toObject = require('to-object-x');
+var assertIsFunction = require('assert-is-function-x');
 var nativeReduce = Array.prototype.reduceRight;
 
 // ES5 15.4.4.22
@@ -31,7 +32,7 @@ var $reduceRight;
 if (nativeReduce && rRightCoercesToObject) {
   $reduceRight = function reduceRight(array, callBack /* , initialValue */) {
     var object = toObject(array);
-    var args = [callBack];
+    var args = [assertIsFunction(callBack)];
     if (arguments.length > 2) {
       args.push(arguments[2]);
     }
@@ -43,7 +44,6 @@ if (nativeReduce && rRightCoercesToObject) {
   // and failure of `0 in boxedString` (Rhino)
   var boxedString = Object('a');
   var splitString = boxedString[0] !== 'a' || (0 in boxedString) === false;
-  var assertIsFunction = require('assert-is-function-x');
   var isString = require('is-string');
   var toLength = require('to-length-x');
   var errMsg = 'reduceRight of empty array with no initial value';
