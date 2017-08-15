@@ -1,6 +1,6 @@
 {
   "name": "array-reduce-right-x",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Reduce an array (from right to left) to a single value.",
   "homepage": "https://github.com/Xotic750/array-reduce-right-x",
   "author": {
