@@ -23,7 +23,7 @@ if (typeof module === 'object' && module.exports) {
 
 var createArrayLike = function (arr) {
   var o = {};
-  arr.forEach(function (e, i) {
+  Array.prototype.forEach.call(arr, function (e, i) {
     o[i] = e;
   });
 
@@ -31,10 +31,31 @@ var createArrayLike = function (arr) {
   return o;
 };
 
-describe('reduceRight', function () {
+var canDistinguish = 0 in [undefined]; // IE 6 - 8 have a bug where this returns false.
+var undefinedIfNoSparseBug = canDistinguish ? undefined : {
+  valueOf: function () {
+    return 0;
+  }
+};
+
+describe('Array', function () {
   var testSubject;
 
   beforeEach(function () {
+    testSubject = [
+      2,
+      3,
+      undefinedIfNoSparseBug,
+      true,
+      'hej',
+      null,
+      false,
+      0
+    ];
+    delete testSubject[1];
+  });
+
+  describe('reduceRight', function () {
     beforeEach(function () {
       testSubject = [
         1,
@@ -42,36 +63,23 @@ describe('reduceRight', function () {
         3
       ];
     });
-  });
 
-  it('is a function', function () {
-    expect(typeof reduceRight).toBe('function');
-  });
+    it('is a function', function () {
+      expect(typeof reduceRight).toBe('function');
+    });
 
-  it('should throw when array is null or undefined', function () {
-    expect(function () {
-      reduceRight();
-    }).toThrow();
+    it('should throw when array is null or undefined', function () {
+      expect(function () {
+        reduceRight();
+      }).toThrow();
 
-    expect(function () {
-      reduceRight(void 0);
-    }).toThrow();
+      expect(function () {
+        reduceRight(void 0);
+      }).toThrow();
 
-    expect(function () {
-      reduceRight(null);
-    }).toThrow();
-  });
-
-  describe('Array', function () {
-    it('should pass the correct arguments to the callback', function () {
-      var spy = jasmine.createSpy().andReturn(0);
-      reduceRight(testSubject, spy);
-      expect(spy.calls[0].args).toEqual([
-        3,
-        2,
-        1,
-        testSubject
-      ]);
+      expect(function () {
+        reduceRight(null);
+      }).toThrow();
     });
 
     describe('Array', function () {
@@ -103,7 +111,6 @@ describe('reduceRight', function () {
           2,
           3
         ];
-
         var i = 0;
         reduceRight(arr, function (a, b) {
           i += 1;
@@ -181,34 +188,36 @@ describe('reduceRight', function () {
 
         expect(visited).toEqual({ 1: true, 3: true });
       });
+
+      it('should have the right length', function () {
+        expect(testSubject.reduceRight.length).toBe(1);
+      });
     });
 
     describe('Array-like objects', function () {
-      var testObject;
-
       beforeEach(function () {
-        testObject = createArrayLike(testSubject);
+        testSubject = createArrayLike(testSubject);
       });
 
       it('should pass the correct arguments to the callback', function () {
         var spy = jasmine.createSpy().andReturn(0);
-        reduceRight(testObject, spy);
+        reduceRight(testSubject, spy);
         expect(spy.calls[0].args).toEqual([
           3,
           2,
           1,
-          testObject
+          testSubject
         ]);
       });
 
       it('should start with the right initialValue', function () {
         var spy = jasmine.createSpy().andReturn(0);
-        reduceRight(testObject, spy, 0);
+        reduceRight(testSubject, spy, 0);
         expect(spy.calls[0].args).toEqual([
           0,
           3,
           2,
-          testObject
+          testSubject
         ]);
       });
 
@@ -246,35 +255,34 @@ describe('reduceRight', function () {
         expect(function () {
           reduceRight({ length: 0 }, spy);
         }).toThrow();
-
         expect(spy).not.toHaveBeenCalled();
       });
 
       it('should throw correctly if no callback is given', function () {
         expect(function () {
-          reduceRight(testObject);
+          reduceRight(testSubject);
         }).toThrow();
       });
 
       it('should return the expected result', function () {
-        expect(reduceRight(testObject, function (a, b) {
+        expect(reduceRight(testSubject, function (a, b) {
           return String(a || '') + String(b || '');
         })).toBe('321');
       });
 
       it('should not directly affect the passed array', function () {
         var copy = createArrayLike(testSubject);
-        reduceRight(testObject, function (a, b) {
+        reduceRight(testSubject, function (a, b) {
           return a + b;
         });
 
-        expect(testObject).toEqual(copy);
+        expect(testSubject).toEqual(copy);
       });
 
       it('should skip non-set values', function () {
-        delete testObject[1];
+        delete testSubject[1];
         var visited = {};
-        reduceRight(testObject, function (a, b) {
+        reduceRight(testSubject, function (a, b) {
           if (a) {
             visited[a] = true;
           }

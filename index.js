@@ -1,6 +1,6 @@
 /**
  * @file Reduce an array (from right to left) to a single value.
- * @version 1.3.0
+ * @version 1.4.0
  * @author Xotic750 <Xotic750@gmail.com>
  * @copyright  Xotic750
  * @license {@link <https://opensource.org/licenses/MIT> MIT}
@@ -9,58 +9,112 @@
 
 'use strict';
 
-var toObject = require('to-object-x');
-var assertIsFunction = require('assert-is-function-x');
-var nativeReduce = Array.prototype.reduceRight;
+var attempt = require('attempt-x');
+var nativeReduceR = typeof Array.prototype.reduceRight === 'function' && Array.prototype.reduceRight;
 
 // ES5 15.4.4.22
 // http://es5.github.com/#x15.4.4.22
 // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/reduceRight
-var rRightCoercesToObject = false;
-if (nativeReduce) {
-  try {
+var isWorking;
+if (nativeReduceR) {
+  isWorking = attempt.call([], nativeReduceR, function (acc) {
+    return acc;
+  }).threw;
+
+  var res;
+  if (isWorking) {
+    res = attempt.call(Object('abc'), nativeReduceR, function (acc, c) {
+      return acc + c;
+    }, 'x');
+
+    isWorking = res.threw === false && res.value === 'xcba';
+  }
+
+  if (isWorking) {
+    res = attempt.call((function () {
+      return arguments;
+    }(1, 2, 3)), nativeReduceR, function (acc, arg) {
+      return acc + arg;
+    }, 1);
+
+    isWorking = res.threw === false && res.value === 7;
+  }
+
+  if (isWorking) {
+    res = attempt.call({
+      0: 1,
+      1: 2,
+      3: 3,
+      4: 4,
+      length: 4
+    }, nativeReduceR, function (acc, arg) {
+      return acc + arg;
+    }, 2);
+
+    isWorking = res.threw === false && res.value === 8;
+  }
+
+  if (isWorking) {
+    var doc = typeof document !== 'undefined' && document;
+    if (doc) {
+      var fragment = doc.createDocumentFragment();
+      var div = doc.createElement('div');
+      fragment.appendChild(div);
+      res = attempt.call(fragment.childNodes, nativeReduceR, function (acc, node) {
+        acc[acc.length] = node;
+        return acc;
+      }, []);
+
+      isWorking = res.threw === false && res.value.length === 1 && res.value[0] === div;
+    }
+  }
+
+  if (isWorking) {
     // eslint-disable-next-line max-params
-    rRightCoercesToObject = typeof nativeReduce.call('es5', function (_, __, ___, list) {
+    res = attempt.call('ab', nativeReduceR, function (_, __, ___, list) {
       return list;
-    }) === 'object';
-  } catch (ignore) {
-    nativeReduce = null;
+    });
+
+    isWorking = res.threw === false && typeof res.value === 'object';
   }
 }
 
 var $reduceRight;
-if (nativeReduce && rRightCoercesToObject) {
+if (nativeReduceR && isWorking) {
   $reduceRight = function reduceRight(array, callBack /* , initialValue */) {
-    var object = toObject(array);
-    var args = [assertIsFunction(callBack)];
+    var args = [callBack];
     if (arguments.length > 2) {
-      args.push(arguments[2]);
+      args[1] = arguments[2];
     }
 
-    return nativeReduce.apply(object, args);
+    return nativeReduceR.apply(array, args);
   };
 } else {
   // Check failure of by-index access of string characters (IE < 9)
   // and failure of `0 in boxedString` (Rhino)
   var boxedString = Object('a');
   var splitString = boxedString[0] !== 'a' || (0 in boxedString) === false;
-  var isString = require('is-string');
+  var strSplit = splitString && String.prototype.split;
+  var isString = splitString && require('is-string');
   var toLength = require('to-length-x');
-  var errMsg = 'reduceRight of empty array with no initial value';
+  var toObject = require('to-object-x');
+  var assertIsFunction = require('assert-is-function-x');
+
   $reduceRight = function reduceRight(array, callBack /* , initialValue*/) {
     var object = toObject(array);
     // If no callback function or if callback is not a callable function
     assertIsFunction(callBack);
-    var iterable = splitString && isString(object) ? object.split('') : object;
+    var iterable = splitString && isString(object) ? strSplit.call(object, '') : object;
     var length = toLength(iterable.length);
-    // no value to return if no initial value and an empty array
-    if (length === 0 && arguments.length === 2) {
-      throw new TypeError(errMsg);
+    var argsLength = arguments.length;
+    // no value to return if no initial value, empty array
+    if (length === 0 && argsLength < 3) {
+      throw new TypeError('reduceRight of empty array with no initial value');
     }
 
     var result;
     var i = length - 1;
-    if (arguments.length > 2) {
+    if (argsLength > 2) {
       result = arguments[2];
     } else {
       // eslint-disable-next-line no-constant-condition
@@ -75,7 +129,7 @@ if (nativeReduce && rRightCoercesToObject) {
         // if array contains no values, no initial value to return
         i -= 1;
         if (i < 0) {
-          throw new TypeError(errMsg);
+          throw new TypeError('reduceRight of empty array with no initial value');
         }
       } while (true);
     }
