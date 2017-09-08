@@ -1,6 +1,6 @@
 /**
  * @file Reduce an array (from right to left) to a single value.
- * @version 1.6.0
+ * @version 2.0.0
  * @author Xotic750 <Xotic750@gmail.com>
  * @copyright  Xotic750
  * @license {@link <https://opensource.org/licenses/MIT> MIT}
@@ -9,7 +9,6 @@
 
 'use strict';
 
-var attempt = require('attempt-x');
 var nativeReduceR = typeof Array.prototype.reduceRight === 'function' && Array.prototype.reduceRight;
 
 // ES5 15.4.4.22
@@ -17,6 +16,7 @@ var nativeReduceR = typeof Array.prototype.reduceRight === 'function' && Array.p
 // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/reduceRight
 var isWorking;
 if (nativeReduceR) {
+  var attempt = require('attempt-x');
   isWorking = attempt.call([], nativeReduceR, function (acc) {
     return acc;
   }).threw;
