@@ -1,6 +1,6 @@
 /**
  * @file Reduce an array (from right to left) to a single value.
- * @version 2.0.0
+ * @version 2.1.0
  * @author Xotic750 <Xotic750@gmail.com>
  * @copyright  Xotic750
  * @license {@link <https://opensource.org/licenses/MIT> MIT}
@@ -9,7 +9,10 @@
 
 'use strict';
 
-var nativeReduceR = typeof Array.prototype.reduceRight === 'function' && Array.prototype.reduceRight;
+var cachedCtrs = require('cached-constructors-x');
+var ArrayCtr = cachedCtrs.Array;
+var castObject = cachedCtrs.Object;
+var nativeReduceR = typeof ArrayCtr.prototype.reduceRight === 'function' && ArrayCtr.prototype.reduceRight;
 
 // ES5 15.4.4.22
 // http://es5.github.com/#x15.4.4.22
@@ -23,7 +26,7 @@ if (nativeReduceR) {
 
   var res;
   if (isWorking) {
-    res = attempt.call(Object('abc'), nativeReduceR, function (acc, c) {
+    res = attempt.call(castObject('abc'), nativeReduceR, function (acc, c) {
       return acc + c;
     }, 'x');
 
@@ -93,7 +96,7 @@ if (nativeReduceR && isWorking) {
   // Check failure of by-index access of string characters (IE < 9)
   // and failure of `0 in boxedString` (Rhino)
   var splitIfBoxedBug = require('split-if-boxed-bug-x');
-  var toLength = require('to-length-x');
+  var toLength = require('to-length-x').toLength2018;
   var toObject = require('to-object-x');
   var assertIsFunction = require('assert-is-function-x');
 
