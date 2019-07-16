@@ -1,27 +1,4 @@
-let reduceRight;
-
-if (typeof module === 'object' && module.exports) {
-  require('es5-shim');
-  require('es5-shim/es5-sham');
-
-  if (typeof JSON === 'undefined') {
-    JSON = {};
-  }
-
-  require('json3').runInContext(null, JSON);
-  require('es6-shim');
-  const es7 = require('es7-shim');
-  Object.keys(es7).forEach(function(key) {
-    const obj = es7[key];
-
-    if (typeof obj.shim === 'function') {
-      obj.shim();
-    }
-  });
-  reduceRight = require('../../index.js');
-} else {
-  reduceRight = returnExports;
-}
+import reduceRight from '../src/array-reduce-right-x';
 
 const createArrayLike = function(arr) {
   const o = {};
@@ -57,37 +34,42 @@ describe('array', function() {
     });
 
     it('is a function', function() {
+      expect.assertions(1);
       expect(typeof reduceRight).toBe('function');
     });
 
     it('should throw when array is null or undefined', function() {
+      expect.assertions(3);
       expect(function() {
         reduceRight();
-      }).toThrow();
+      }).toThrowErrorMatchingSnapshot();
 
       expect(function() {
         reduceRight(void 0);
-      }).toThrow();
+      }).toThrowErrorMatchingSnapshot();
 
       expect(function() {
         reduceRight(null);
-      }).toThrow();
+      }).toThrowErrorMatchingSnapshot();
     });
 
     describe('array', function() {
       it('should pass the correct arguments to the callback', function() {
-        const spy = jasmine.createSpy().andReturn(0);
+        expect.assertions(1);
+        const spy = jest.fn().mockReturnValue(0);
         reduceRight(testSubject, spy);
-        expect(spy.calls[0].args).toStrictEqual([3, 2, 1, testSubject]);
+        expect(spy).toHaveBeenCalledWith(3, 2, 1, testSubject);
       });
 
       it('should start with the right initialValue', function() {
-        const spy = jasmine.createSpy().andReturn(0);
+        expect.assertions(1);
+        const spy = jest.fn().mockReturnValue(0);
         reduceRight(testSubject, spy, 0);
-        expect(spy.calls[0].args).toStrictEqual([0, 3, 2, testSubject]);
+        expect(spy).toHaveBeenCalledWith(0, 3, 2, testSubject);
       });
 
       it('should not affect elements added to the array after it has begun', function() {
+        expect.assertions(2);
         const arr = [1, 2, 3];
         let i = 0;
         reduceRight(arr, function(a, b) {
@@ -106,30 +88,32 @@ describe('array', function() {
       });
 
       it('should work as expected for empty arrays', function() {
-        const spy = jasmine.createSpy();
+        expect.assertions(2);
+        const spy = jest.fn();
         expect(function() {
           reduceRight([], spy);
-        }).toThrow();
+        }).toThrowErrorMatchingSnapshot();
 
         expect(spy).not.toHaveBeenCalled();
       });
 
       it('should work as expected for empty arrays with an initial value', function() {
-        const spy = jasmine.createSpy();
-        let result;
-
-        result = reduceRight([], spy, '');
+        expect.assertions(2);
+        const spy = jest.fn();
+        const result = reduceRight([], spy, '');
         expect(spy).not.toHaveBeenCalled();
         expect(result).toBe('');
       });
 
       it('should throw correctly if no callback is given', function() {
+        expect.assertions(1);
         expect(function() {
           reduceRight(testSubject);
-        }).toThrow();
+        }).toThrowErrorMatchingSnapshot();
       });
 
       it('should return the expected result', function() {
+        expect.assertions(1);
         expect(
           reduceRight(testSubject, function(a, b) {
             return String(a || '') + String(b || '');
@@ -138,6 +122,7 @@ describe('array', function() {
       });
 
       it('should not directly affect the passed array', function() {
+        expect.assertions(1);
         const copy = testSubject.slice();
         reduceRight(testSubject, function(a, b) {
           return a + b;
@@ -147,6 +132,7 @@ describe('array', function() {
       });
 
       it('should skip non-set values', function() {
+        expect.assertions(1);
         delete testSubject[1];
         const visited = {};
         reduceRight(testSubject, function(a, b) {
@@ -165,6 +151,7 @@ describe('array', function() {
       });
 
       it('should have the right length', function() {
+        expect.assertions(1);
         expect(testSubject.reduceRight).toHaveLength(1);
       });
     });
@@ -175,18 +162,21 @@ describe('array', function() {
       });
 
       it('should pass the correct arguments to the callback', function() {
-        const spy = jasmine.createSpy().andReturn(0);
+        expect.assertions(1);
+        const spy = jest.fn().mockReturnValue(0);
         reduceRight(testSubject, spy);
-        expect(spy.calls[0].args).toStrictEqual([3, 2, 1, testSubject]);
+        expect(spy).toHaveBeenCalledWith(3, 2, 1, testSubject);
       });
 
       it('should start with the right initialValue', function() {
-        const spy = jasmine.createSpy().andReturn(0);
+        expect.assertions(1);
+        const spy = jest.fn().mockReturnValue(0);
         reduceRight(testSubject, spy, 0);
-        expect(spy.calls[0].args).toStrictEqual([0, 3, 2, testSubject]);
+        expect(spy).toHaveBeenCalledWith(0, 3, 2, testSubject);
       });
 
       it('should not affect elements added to the array after it has begun', function() {
+        expect.assertions(2);
         const arr = createArrayLike([1, 2, 3]);
 
         let i = 0;
@@ -213,20 +203,23 @@ describe('array', function() {
       });
 
       it('should work as expected for empty arrays', function() {
-        const spy = jasmine.createSpy();
+        expect.assertions(2);
+        const spy = jest.fn();
         expect(function() {
           reduceRight({length: 0}, spy);
-        }).toThrow();
+        }).toThrowErrorMatchingSnapshot();
         expect(spy).not.toHaveBeenCalled();
       });
 
       it('should throw correctly if no callback is given', function() {
+        expect.assertions(1);
         expect(function() {
           reduceRight(testSubject);
-        }).toThrow();
+        }).toThrowErrorMatchingSnapshot();
       });
 
       it('should return the expected result', function() {
+        expect.assertions(1);
         expect(
           reduceRight(testSubject, function(a, b) {
             return String(a || '') + String(b || '');
@@ -235,6 +228,7 @@ describe('array', function() {
       });
 
       it('should not directly affect the passed array', function() {
+        expect.assertions(1);
         const copy = createArrayLike(testSubject);
         reduceRight(testSubject, function(a, b) {
           return a + b;
@@ -244,6 +238,7 @@ describe('array', function() {
       });
 
       it('should skip non-set values', function() {
+        expect.assertions(1);
         delete testSubject[1];
         const visited = {};
         reduceRight(testSubject, function(a, b) {
@@ -263,8 +258,8 @@ describe('array', function() {
     });
 
     it('should have a boxed object as list argument of callback', function() {
+      expect.assertions(2);
       let actual;
-      // eslint-disable-next-line max-params
       reduceRight('foo', function(accumulator, item, index, list) {
         actual = list;
       });

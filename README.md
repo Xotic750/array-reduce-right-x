@@ -21,15 +21,13 @@
 <a name="module_array-reduce-right-x"></a>
 
 ## array-reduce-right-x
+
 Reduce an array (from right to left) to a single value.
 
-**Version**: 2.1.0  
-**Author**: Xotic750 <Xotic750@gmail.com>  
-**License**: [MIT](&lt;https://opensource.org/licenses/MIT&gt;)  
-**Copyright**: Xotic750  
 <a name="exp_module_array-reduce-right-x--module.exports"></a>
 
 ### `module.exports` ⇒ <code>\*</code> ⏏
+
 This method applies a function against an accumulator and each value of the
 array (from right-to-left) to reduce it to a single value..
 
@@ -41,19 +39,24 @@ array (from right-to-left) to reduce it to a single value..
 - <code>TypeError</code> If callBack is not a function.
 - <code>TypeError</code> If called on an empty array without an initial value.
 
+| Param          | Type                  | Description                                                                                                                                                                                                                     |
+| -------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| array          | <code>array</code>    | The array to iterate over.                                                                                                                                                                                                      |
+| callBack       | <code>function</code> | Function to execute for each element.                                                                                                                                                                                           |
+| [initialValue] | <code>\*</code>       | Value to use as the first argument to the first call of the callback. If no initial value is supplied, the first element in the array will be used. Calling reduceRight on an empty array without an initial value is an error. |
 
-| Param | Type | Description |
-| --- | --- | --- |
-| array | <code>array</code> | The array to iterate over. |
-| callBack | <code>function</code> | Function to execute for each element. |
-| [initialValue] | <code>\*</code> | Value to use as the first argument to the first  call of the callback. If no initial value is supplied, the first element in  the array will be used. Calling reduceRight on an empty array without an initial  value is an error. |
+**Example**
 
-**Example**  
 ```js
-var reduceRight = require('array-reduce-right-x');
+import reduceRight from 'array-reduce-right-x';
 
-var sum = reduceRight([0, 1, 2, 3], function (a, b) {
-  return a + b;
-}, 0);
-// sum is 6
+console.log(
+  reduceRight(
+    [0, 1, 2, 3],
+    function(a, b) {
+      return a + b;
+    },
+    0,
+  ),
+); // sum is 6
 ```

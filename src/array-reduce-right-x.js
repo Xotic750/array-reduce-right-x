@@ -1,16 +1,11 @@
-/**
- * @file Reduce an array (from right to left) to a single value.
- * @version 2.1.0.
- * @author Xotic750 <Xotic750@gmail.com>.
- * @copyright  Xotic750.
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module Array-reduce-right-x.
- */
+import attempt from 'attempt-x';
+import splitIfBoxedBug from 'split-if-boxed-bug-x';
+import toLength from 'to-length-x';
+import toObject from 'to-object-x';
+import assertIsFunction from 'assert-is-function-x';
 
-const cachedCtrs = require('cached-constructors-x');
-
-const ArrayCtr = cachedCtrs.Array;
-const castObject = cachedCtrs.Object;
+const ArrayCtr = [].constructor;
+const castObject = {}.constructor;
 const nativeReduceR = typeof ArrayCtr.prototype.reduceRight === 'function' && ArrayCtr.prototype.reduceRight;
 
 // ES5 15.4.4.22
@@ -19,8 +14,7 @@ const nativeReduceR = typeof ArrayCtr.prototype.reduceRight === 'function' && Ar
 let isWorking;
 
 if (nativeReduceR) {
-  const attempt = require('attempt-x');
-  isWorking = attempt.call([], nativeReduceR, function(acc) {
+  isWorking = attempt.call([], nativeReduceR, (acc) => {
     return acc;
   }).threw;
 
@@ -30,7 +24,7 @@ if (nativeReduceR) {
     res = attempt.call(
       castObject('abc'),
       nativeReduceR,
-      function(acc, c) {
+      (acc, c) => {
         return acc + c;
       },
       'x',
@@ -41,11 +35,12 @@ if (nativeReduceR) {
 
   if (isWorking) {
     res = attempt.call(
-      (function() {
+      (function getArgs() {
+        /* eslint-disable-next-line prefer-rest-params */
         return arguments;
       })(1, 2, 3),
       nativeReduceR,
-      function(acc, arg) {
+      (acc, arg) => {
         return acc + arg;
       },
       1,
@@ -64,7 +59,7 @@ if (nativeReduceR) {
         length: 4,
       },
       nativeReduceR,
-      function(acc, arg) {
+      (acc, arg) => {
         return acc + arg;
       },
       2,
@@ -83,7 +78,7 @@ if (nativeReduceR) {
       res = attempt.call(
         fragment.childNodes,
         nativeReduceR,
-        function(acc, node) {
+        (acc, node) => {
           acc[acc.length] = node;
 
           return acc;
@@ -96,8 +91,7 @@ if (nativeReduceR) {
   }
 
   if (isWorking) {
-    // eslint-disable-next-line max-params
-    res = attempt.call('ab', nativeReduceR, function(_, __, ___, list) {
+    res = attempt.call('ab', nativeReduceR, (_, __, ___, list) => {
       return list;
     });
 
@@ -105,6 +99,21 @@ if (nativeReduceR) {
   }
 }
 
+/**
+ * This method applies a function against an accumulator and each value of the
+ * array (from right-to-left) to reduce it to a single value..
+ *
+ * @param {Array} array - The array to iterate over.
+ * @param {Function} callBack - Function to execute for each element.
+ * @param {*} [initialValue] - Value to use as the first argument to the first
+ *  call of the callback. If no initial value is supplied, the first element in
+ *  the array will be used. Calling reduceRight on an empty array without an initial
+ *  value is an error.
+ * @throws {TypeError} If array is null or undefined.
+ * @throws {TypeError} If callBack is not a function.
+ * @throws {TypeError} If called on an empty array without an initial value.
+ * @returns {*} The value that results from the reduction.
+ */
 let $reduceRight;
 
 if (nativeReduceR && isWorking) {
@@ -112,19 +121,13 @@ if (nativeReduceR && isWorking) {
     const args = [callBack];
 
     if (arguments.length > 2) {
+      /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
       args[1] = arguments[2];
     }
 
     return nativeReduceR.apply(array, args);
   };
 } else {
-  // Check failure of by-index access of string characters (IE < 9)
-  // and failure of `0 in boxedString` (Rhino)
-  const splitIfBoxedBug = require('split-if-boxed-bug-x');
-  const toLength = require('to-length-x').toLength2018;
-  const toObject = require('to-object-x');
-  const assertIsFunction = require('assert-is-function-x');
-
   $reduceRight = function reduceRight(array, callBack /* , initialValue */) {
     const object = toObject(array);
     // If no callback function or if callback is not a callable function
@@ -142,14 +145,13 @@ if (nativeReduceR && isWorking) {
     let i = length - 1;
 
     if (argsLength > 2) {
+      /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
       result = arguments[2];
     } else {
-      // eslint-disable-next-line no-constant-condition
       do {
         if (i in iterable) {
           result = iterable[i];
           i -= 1;
-          // eslint-disable-next-line no-restricted-syntax
           break;
         }
 
@@ -159,7 +161,7 @@ if (nativeReduceR && isWorking) {
         if (i < 0) {
           throw new TypeError('reduceRight of empty array with no initial value');
         }
-      } while (true);
+      } while (true); /* eslint-disable-line no-constant-condition */
     }
 
     while (i >= 0) {
@@ -174,26 +176,6 @@ if (nativeReduceR && isWorking) {
   };
 }
 
-/**
- * This method applies a function against an accumulator and each value of the
- * array (from right-to-left) to reduce it to a single value..
- *
- * @param {Array} array - The array to iterate over.
- * @param {Function} callBack - Function to execute for each element.
- * @param {*} [initialValue] - Value to use as the first argument to the first
- *  call of the callback. If no initial value is supplied, the first element in
- *  the array will be used. Calling reduceRight on an empty array without an initial
- *  value is an error.
- * @throws {TypeError} If array is null or undefined.
- * @throws {TypeError} If callBack is not a function.
- * @throws {TypeError} If called on an empty array without an initial value.
- * @returns {*} The value that results from the reduction.
- * @example
- * var reduceRight = require('array-reduce-right-x');.
- *
- * var sum = reduceRight([0, 1, 2, 3], function (a, b) {
- *   return a + b;
- * }, 0);
- * // sum is 6
- */
-module.exports = $reduceRight;
+const rr = $reduceRight;
+
+export default rr;
