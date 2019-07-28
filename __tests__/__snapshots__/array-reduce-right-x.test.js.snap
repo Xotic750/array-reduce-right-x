@@ -8,8 +8,8 @@ exports[`array reduceRight array-like objects should throw correctly if no callb
 
 exports[`array reduceRight array-like objects should work as expected for empty arrays 1`] = `"Reduce of empty array with no initial value"`;
 
-exports[`array reduceRight should throw when array is null or undefined 1`] = `"Array.prototype.reduceRight called on null or undefined"`;
+exports[`array reduceRight should throw when array is null or undefined 1`] = `"Cannot call method on undefined"`;
 
-exports[`array reduceRight should throw when array is null or undefined 2`] = `"Array.prototype.reduceRight called on null or undefined"`;
+exports[`array reduceRight should throw when array is null or undefined 2`] = `"Cannot call method on undefined"`;
 
-exports[`array reduceRight should throw when array is null or undefined 3`] = `"Array.prototype.reduceRight called on null or undefined"`;
+exports[`array reduceRight should throw when array is null or undefined 3`] = `"Cannot call method on null"`;

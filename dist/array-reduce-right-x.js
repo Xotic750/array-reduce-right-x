@@ -2,11 +2,11 @@
 {
   "author": "Graham Fairweather",
   "copywrite": "Copyright (c) 2017",
-  "date": "2019-07-27T21:57:14.952Z",
+  "date": "2019-07-28T22:45:21.169Z",
   "describe": "",
   "description": "Reduce an array (from right to left) to a single value.",
   "file": "array-reduce-right-x.js",
-  "hash": "df575570b1ee3f93005f",
+  "hash": "d514975fc4c1861c834c",
   "license": "MIT",
   "version": "3.0.13"
 }
@@ -1593,119 +1593,90 @@ var assert_is_function_x_esm_assertIsFunction = function assertIsFunction(callba
 
 
 // CONCATENATED MODULE: ./dist/array-reduce-right-x.esm.js
-var array_reduce_right_x_esm_this = undefined;
-
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function array_reduce_right_x_esm_newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
 
 
 
 
 
-var ArrayCtr = [].constructor;
+
 var array_reduce_right_x_esm_castObject = {}.constructor;
-var nativeReduceR = typeof ArrayCtr.prototype.reduceRight === 'function' && ArrayCtr.prototype.reduceRight; // ES5 15.4.4.22
+var rr = [].reduceRight;
+var nativeReduceR = typeof rr === 'function' && rr;
+
+var array_reduce_right_x_esm_test1 = function test1() {
+  return attempt_x_esm.call([], nativeReduceR, function attemptee(acc) {
+    return acc;
+  }).threw;
+};
+
+var array_reduce_right_x_esm_test2 = function test2() {
+  var res = attempt_x_esm.call(array_reduce_right_x_esm_castObject('abc'), nativeReduceR, function attemptee(acc, c) {
+    return acc + c;
+  }, 'x');
+  return res.threw === false && res.value === 'xcba';
+};
+
+var array_reduce_right_x_esm_test3 = function test3() {
+  var res = attempt_x_esm.call(function getArgs() {
+    /* eslint-disable-next-line prefer-rest-params */
+    return arguments;
+  }(1, 2, 3), nativeReduceR, function attemptee(acc, arg) {
+    return acc + arg;
+  }, 1);
+  return res.threw === false && res.value === 7;
+};
+
+var array_reduce_right_x_esm_test4 = function test4() {
+  var res = attempt_x_esm.call({
+    0: 1,
+    1: 2,
+    3: 3,
+    4: 4,
+    length: 4
+  }, nativeReduceR, function attemptee(acc, arg) {
+    return acc + arg;
+  }, 2);
+  return res.threw === false && res.value === 8;
+};
+
+var array_reduce_right_x_esm_test5 = function test5() {
+  var doc = typeof document !== 'undefined' && document;
+
+  if (doc) {
+    var fragment = doc.createDocumentFragment();
+    var div = doc.createElement('div');
+    fragment.appendChild(div);
+    var res = attempt_x_esm.call(fragment.childNodes, nativeReduceR, function attemptee(acc, node) {
+      acc[acc.length] = node;
+      return acc;
+    }, []);
+    return res.threw === false && res.value.length === 1 && res.value[0] === div;
+  }
+
+  return true;
+};
+
+var array_reduce_right_x_esm_test6 = function test6() {
+  var res = attempt_x_esm.call('ab', nativeReduceR, function attemptee(_, __, ___, list) {
+    return list;
+  });
+  return res.threw === false && _typeof(res.value) === 'object';
+}; // ES5 15.4.4.22
 // http://es5.github.com/#x15.4.4.22
 // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Array/reduceRight
 
-var isWorking;
 
-if (nativeReduceR) {
-  isWorking = attempt_x_esm.call([], nativeReduceR, function (acc) {
-    array_reduce_right_x_esm_newArrowCheck(this, array_reduce_right_x_esm_this);
+var isWorking = to_boolean_x_esm(nativeReduceR) && array_reduce_right_x_esm_test1() && array_reduce_right_x_esm_test2() && array_reduce_right_x_esm_test3() && array_reduce_right_x_esm_test4() && array_reduce_right_x_esm_test5() && array_reduce_right_x_esm_test6();
 
-    return acc;
-  }.bind(undefined)).threw;
-  var res;
-
-  if (isWorking) {
-    res = attempt_x_esm.call(array_reduce_right_x_esm_castObject('abc'), nativeReduceR, function (acc, c) {
-      array_reduce_right_x_esm_newArrowCheck(this, array_reduce_right_x_esm_this);
-
-      return acc + c;
-    }.bind(undefined), 'x');
-    isWorking = res.threw === false && res.value === 'xcba';
-  }
-
-  if (isWorking) {
-    res = attempt_x_esm.call(function getArgs() {
-      /* eslint-disable-next-line prefer-rest-params */
-      return arguments;
-    }(1, 2, 3), nativeReduceR, function (acc, arg) {
-      array_reduce_right_x_esm_newArrowCheck(this, array_reduce_right_x_esm_this);
-
-      return acc + arg;
-    }.bind(undefined), 1);
-    isWorking = res.threw === false && res.value === 7;
-  }
-
-  if (isWorking) {
-    res = attempt_x_esm.call({
-      0: 1,
-      1: 2,
-      3: 3,
-      4: 4,
-      length: 4
-    }, nativeReduceR, function (acc, arg) {
-      array_reduce_right_x_esm_newArrowCheck(this, array_reduce_right_x_esm_this);
-
-      return acc + arg;
-    }.bind(undefined), 2);
-    isWorking = res.threw === false && res.value === 8;
-  }
-
-  if (isWorking) {
-    var doc = typeof document !== 'undefined' && document;
-
-    if (doc) {
-      var fragment = doc.createDocumentFragment();
-      var div = doc.createElement('div');
-      fragment.appendChild(div);
-      res = attempt_x_esm.call(fragment.childNodes, nativeReduceR, function (acc, node) {
-        array_reduce_right_x_esm_newArrowCheck(this, array_reduce_right_x_esm_this);
-
-        acc[acc.length] = node;
-        return acc;
-      }.bind(undefined), []);
-      isWorking = res.threw === false && res.value.length === 1 && res.value[0] === div;
-    }
-  }
-
-  if (isWorking) {
-    res = attempt_x_esm.call('ab', nativeReduceR, function (_, __, ___, list) {
-      array_reduce_right_x_esm_newArrowCheck(this, array_reduce_right_x_esm_this);
-
-      return list;
-    }.bind(undefined));
-    isWorking = res.threw === false && _typeof(res.value) === 'object';
-  }
-}
-/**
- * This method applies a function against an accumulator and each value of the
- * array (from right-to-left) to reduce it to a single value..
- *
- * @param {Array} array - The array to iterate over.
- * @param {Function} callBack - Function to execute for each element.
- * @param {*} [initialValue] - Value to use as the first argument to the first
- *  call of the callback. If no initial value is supplied, the first element in
- *  the array will be used. Calling reduceRight on an empty array without an initial
- *  value is an error.
- * @throws {TypeError} If array is null or undefined.
- * @throws {TypeError} If callBack is not a function.
- * @throws {TypeError} If called on an empty array without an initial value.
- * @returns {*} The value that results from the reduction.
- */
-
-
-var $reduceRight;
-
-if (nativeReduceR && isWorking) {
-  $reduceRight = function reduceRight(array, callBack
+var array_reduce_right_x_esm_patchedReduceRight = function patchedReduceRight() {
+  return function reduceRight(array, callBack
   /* , initialValue */
   ) {
-    var args = [callBack];
+    require_object_coercible_x_esm(array);
+    var args = [assert_is_function_x_esm(callBack)];
 
     if (arguments.length > 2) {
       /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
@@ -1714,8 +1685,10 @@ if (nativeReduceR && isWorking) {
 
     return nativeReduceR.apply(array, args);
   };
-} else {
-  $reduceRight = function reduceRight(array, callBack
+};
+
+var array_reduce_right_x_esm_implementation = function implementation() {
+  return function reduceRight(array, callBack
   /* , initialValue */
   ) {
     var object = to_object_x_esm(array); // If no callback function or if callback is not a callable function
@@ -1726,7 +1699,7 @@ if (nativeReduceR && isWorking) {
     var argsLength = arguments.length; // no value to return if no initial value, empty array
 
     if (length === 0 && argsLength < 3) {
-      throw new TypeError('reduceRight of empty array with no initial value');
+      throw new TypeError('Reduce of empty array with no initial value');
     }
 
     var result;
@@ -1747,7 +1720,7 @@ if (nativeReduceR && isWorking) {
         i -= 1;
 
         if (i < 0) {
-          throw new TypeError('reduceRight of empty array with no initial value');
+          throw new TypeError('Reduce of empty array with no initial value');
         }
       } while (true);
       /* eslint-disable-line no-constant-condition */
@@ -1764,10 +1737,26 @@ if (nativeReduceR && isWorking) {
 
     return result;
   };
-}
+};
+/**
+ * This method applies a function against an accumulator and each value of the
+ * array (from right-to-left) to reduce it to a single value..
+ *
+ * @param {Array} array - The array to iterate over.
+ * @param {Function} callBack - Function to execute for each element.
+ * @param {*} [initialValue] - Value to use as the first argument to the first
+ *  call of the callback. If no initial value is supplied, the first element in
+ *  the array will be used. Calling reduceRight on an empty array without an initial
+ *  value is an error.
+ * @throws {TypeError} If array is null or undefined.
+ * @throws {TypeError} If callBack is not a function.
+ * @throws {TypeError} If called on an empty array without an initial value.
+ * @returns {*} The value that results from the reduction.
+ */
 
-var rr = $reduceRight;
-/* harmony default export */ var array_reduce_right_x_esm = __webpack_exports__["default"] = (rr);
+
+var $reduceRight = isWorking ? array_reduce_right_x_esm_patchedReduceRight() : array_reduce_right_x_esm_implementation();
+/* harmony default export */ var array_reduce_right_x_esm = __webpack_exports__["default"] = ($reduceRight);
 
 
 
