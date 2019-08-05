@@ -54,10 +54,13 @@ var test5 = function test5() {
     var fragment = doc.createDocumentFragment();
     var div = doc.createElement('div');
     fragment.appendChild(div);
-    var res = attempt.call(fragment.childNodes, nativeReduceR, function attemptee(acc, node) {
+
+    var attemptee = function attemptee(acc, node) {
       acc[acc.length] = node;
       return acc;
-    }, []);
+    };
+
+    var res = attempt.call(fragment.childNodes, nativeReduceR, attemptee, []);
     return res.threw === false && res.value.length === 1 && res.value[0] === div;
   }
 
@@ -65,8 +68,9 @@ var test5 = function test5() {
 };
 
 var test6 = function test6() {
-  var res = attempt.call('ab', nativeReduceR, function attemptee(_, __, ___, list) {
-    return list;
+  var res = attempt.call('ab', nativeReduceR, function attemptee() {
+    /* eslint-disable-next-line prefer-rest-params */
+    return arguments[3];
   });
   return res.threw === false && _typeof(res.value) === 'object';
 }; // ES5 15.4.4.22
@@ -76,72 +80,68 @@ var test6 = function test6() {
 
 var isWorking = toBoolean(nativeReduceR) && test1() && test2() && test3() && test4() && test5() && test6();
 
-var patchedReduceRight = function patchedReduceRight() {
-  return function reduceRight(array, callBack
-  /* , initialValue */
-  ) {
-    requireObjectCoercible(array);
-    var args = [assertIsFunction(callBack)];
+var patchedReduceRight = function reduceRight(array, callBack
+/* , initialValue */
+) {
+  requireObjectCoercible(array);
+  var args = [assertIsFunction(callBack)];
 
-    if (arguments.length > 2) {
-      /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
-      args[1] = arguments[2];
-    }
+  if (arguments.length > 2) {
+    /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
+    args[1] = arguments[2];
+  }
 
-    return nativeReduceR.apply(array, args);
-  };
+  return nativeReduceR.apply(array, args);
 };
 
-var implementation = function implementation() {
-  return function reduceRight(array, callBack
-  /* , initialValue */
-  ) {
-    var object = toObject(array); // If no callback function or if callback is not a callable function
+var implementation = function reduceRight(array, callBack
+/* , initialValue */
+) {
+  var object = toObject(array); // If no callback function or if callback is not a callable function
 
-    assertIsFunction(callBack);
-    var iterable = splitIfBoxedBug(object);
-    var length = toLength(iterable.length);
-    var argsLength = arguments.length; // no value to return if no initial value, empty array
+  assertIsFunction(callBack);
+  var iterable = splitIfBoxedBug(object);
+  var length = toLength(iterable.length);
+  var argsLength = arguments.length; // no value to return if no initial value, empty array
 
-    if (length === 0 && argsLength < 3) {
-      throw new TypeError('Reduce of empty array with no initial value');
-    }
+  if (length === 0 && argsLength < 3) {
+    throw new TypeError('Reduce of empty array with no initial value');
+  }
 
-    var result;
-    var i = length - 1;
+  var result;
+  var i = length - 1;
 
-    if (argsLength > 2) {
-      /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
-      result = arguments[2];
-    } else {
-      do {
-        if (i in iterable) {
-          result = iterable[i];
-          i -= 1;
-          break;
-        } // if array contains no values, no initial value to return
-
-
-        i -= 1;
-
-        if (i < 0) {
-          throw new TypeError('Reduce of empty array with no initial value');
-        }
-      } while (true);
-      /* eslint-disable-line no-constant-condition */
-
-    }
-
-    while (i >= 0) {
+  if (argsLength > 2) {
+    /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
+    result = arguments[2];
+  } else {
+    do {
       if (i in iterable) {
-        result = callBack(result, iterable[i], i, object);
-      }
+        result = iterable[i];
+        i -= 1;
+        break;
+      } // if array contains no values, no initial value to return
+
 
       i -= 1;
+
+      if (i < 0) {
+        throw new TypeError('Reduce of empty array with no initial value');
+      }
+    } while (true);
+    /* eslint-disable-line no-constant-condition */
+
+  }
+
+  while (i >= 0) {
+    if (i in iterable) {
+      result = callBack(result, iterable[i], i, object);
     }
 
-    return result;
-  };
+    i -= 1;
+  }
+
+  return result;
 };
 /**
  * This method applies a function against an accumulator and each value of the
@@ -160,7 +160,7 @@ var implementation = function implementation() {
  */
 
 
-var $reduceRight = isWorking ? patchedReduceRight() : implementation();
+var $reduceRight = isWorking ? patchedReduceRight : implementation;
 export default $reduceRight;
 
 //# sourceMappingURL=array-reduce-right-x.esm.js.map
