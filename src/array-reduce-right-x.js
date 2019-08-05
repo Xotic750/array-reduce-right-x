@@ -6,7 +6,6 @@ import assertIsFunction from 'assert-is-function-x';
 import toBoolean from 'to-boolean-x';
 import requireObjectCoercible from 'require-object-coercible-x';
 
-const castObject = {}.constructor;
 const rr = [].reduceRight;
 const nativeReduceR = typeof rr === 'function' && rr;
 
@@ -18,7 +17,7 @@ const test1 = function test1() {
 
 const test2 = function test2() {
   const res = attempt.call(
-    castObject('abc'),
+    toObject('abc'),
     nativeReduceR,
     function attemptee(acc, c) {
       return acc + c;

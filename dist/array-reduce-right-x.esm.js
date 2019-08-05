@@ -7,7 +7,6 @@ import toObject from 'to-object-x';
 import assertIsFunction from 'assert-is-function-x';
 import toBoolean from 'to-boolean-x';
 import requireObjectCoercible from 'require-object-coercible-x';
-var castObject = {}.constructor;
 var rr = [].reduceRight;
 var nativeReduceR = typeof rr === 'function' && rr;
 
@@ -18,7 +17,7 @@ var test1 = function test1() {
 };
 
 var test2 = function test2() {
-  var res = attempt.call(castObject('abc'), nativeReduceR, function attemptee(acc, c) {
+  var res = attempt.call(toObject('abc'), nativeReduceR, function attemptee(acc, c) {
     return acc + c;
   }, 'x');
   return res.threw === false && res.value === 'xcba';

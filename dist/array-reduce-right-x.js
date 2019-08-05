@@ -2,11 +2,11 @@
 {
   "author": "Graham Fairweather",
   "copywrite": "Copyright (c) 2017",
-  "date": "2019-08-05T12:00:50.175Z",
+  "date": "2019-08-05T15:55:48.218Z",
   "describe": "",
   "description": "Reduce an array (from right to left) to a single value.",
   "file": "array-reduce-right-x.js",
-  "hash": "27f408ff7836a3bfbd20",
+  "hash": "fb2c81b75556c56100b2",
   "license": "MIT",
   "version": "3.0.14"
 }
@@ -1638,7 +1638,6 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 
 
-var array_reduce_right_x_esm_castObject = {}.constructor;
 var rr = [].reduceRight;
 var nativeReduceR = typeof rr === 'function' && rr;
 
@@ -1649,7 +1648,7 @@ var array_reduce_right_x_esm_test1 = function test1() {
 };
 
 var array_reduce_right_x_esm_test2 = function test2() {
-  var res = attempt_x_esm.call(array_reduce_right_x_esm_castObject('abc'), nativeReduceR, function attemptee(acc, c) {
+  var res = attempt_x_esm.call(to_object_x_esm('abc'), nativeReduceR, function attemptee(acc, c) {
     return acc + c;
   }, 'x');
   return res.threw === false && res.value === 'xcba';
