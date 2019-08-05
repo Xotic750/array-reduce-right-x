@@ -93,7 +93,7 @@ var patchedReduceRight = function reduceRight(array, callBack
   return nativeReduceR.apply(array, args);
 };
 
-var implementation = function reduceRight(array, callBack
+export var implementation = function reduceRight(array, callBack
 /* , initialValue */
 ) {
   var object = toObject(array); // If no callback function or if callback is not a callable function
@@ -157,7 +157,6 @@ var implementation = function reduceRight(array, callBack
  * @throws {TypeError} If called on an empty array without an initial value.
  * @returns {*} The value that results from the reduction.
  */
-
 
 var $reduceRight = isWorking ? patchedReduceRight : implementation;
 export default $reduceRight;

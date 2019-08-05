@@ -2,11 +2,11 @@
 {
   "author": "Graham Fairweather",
   "copywrite": "Copyright (c) 2017",
-  "date": "2019-08-05T15:55:48.218Z",
+  "date": "2019-08-05T17:29:40.445Z",
   "describe": "",
   "description": "Reduce an array (from right to left) to a single value.",
   "file": "array-reduce-right-x.js",
-  "hash": "fb2c81b75556c56100b2",
+  "hash": "407c087c37d82e3ef722",
   "license": "MIT",
   "version": "3.0.14"
 }
@@ -1629,6 +1629,7 @@ var assert_is_function_x_esm_assertIsFunction = function assertIsFunction(callba
 
 
 // CONCATENATED MODULE: ./dist/array-reduce-right-x.esm.js
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "implementation", function() { return implementation; });
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 
@@ -1788,7 +1789,6 @@ var implementation = function reduceRight(array, callBack
  * @throws {TypeError} If called on an empty array without an initial value.
  * @returns {*} The value that results from the reduction.
  */
-
 
 var $reduceRight = isWorking ? patchedReduceRight : implementation;
 /* harmony default export */ var array_reduce_right_x_esm = __webpack_exports__["default"] = ($reduceRight);

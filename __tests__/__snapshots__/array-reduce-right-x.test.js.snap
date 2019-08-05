@@ -1,15 +1,29 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`array reduceRight array should throw correctly if no callback is given 1`] = `"undefined is not a function"`;
+exports[`array 0 reduceRight array should throw correctly if no callback is given 1`] = `"undefined is not a function"`;
 
-exports[`array reduceRight array should work as expected for empty arrays 1`] = `"Reduce of empty array with no initial value"`;
+exports[`array 0 reduceRight array should work as expected for empty arrays 1`] = `"Reduce of empty array with no initial value"`;
 
-exports[`array reduceRight array-like objects should throw correctly if no callback is given 1`] = `"undefined is not a function"`;
+exports[`array 0 reduceRight array-like objects should throw correctly if no callback is given 1`] = `"undefined is not a function"`;
 
-exports[`array reduceRight array-like objects should work as expected for empty arrays 1`] = `"Reduce of empty array with no initial value"`;
+exports[`array 0 reduceRight array-like objects should work as expected for empty arrays 1`] = `"Reduce of empty array with no initial value"`;
 
-exports[`array reduceRight should throw when array is null or undefined 1`] = `"Cannot call method on undefined"`;
+exports[`array 0 reduceRight should throw when array is null or undefined 1`] = `"Cannot call method on undefined"`;
 
-exports[`array reduceRight should throw when array is null or undefined 2`] = `"Cannot call method on undefined"`;
+exports[`array 0 reduceRight should throw when array is null or undefined 2`] = `"Cannot call method on undefined"`;
 
-exports[`array reduceRight should throw when array is null or undefined 3`] = `"Cannot call method on null"`;
+exports[`array 0 reduceRight should throw when array is null or undefined 3`] = `"Cannot call method on null"`;
+
+exports[`array 1 reduceRight array should throw correctly if no callback is given 1`] = `"undefined is not a function"`;
+
+exports[`array 1 reduceRight array should work as expected for empty arrays 1`] = `"Reduce of empty array with no initial value"`;
+
+exports[`array 1 reduceRight array-like objects should throw correctly if no callback is given 1`] = `"undefined is not a function"`;
+
+exports[`array 1 reduceRight array-like objects should work as expected for empty arrays 1`] = `"Reduce of empty array with no initial value"`;
+
+exports[`array 1 reduceRight should throw when array is null or undefined 1`] = `"Cannot call method on undefined"`;
+
+exports[`array 1 reduceRight should throw when array is null or undefined 2`] = `"Cannot call method on undefined"`;
+
+exports[`array 1 reduceRight should throw when array is null or undefined 3`] = `"Cannot call method on null"`;
