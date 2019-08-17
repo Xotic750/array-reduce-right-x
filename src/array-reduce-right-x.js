@@ -5,73 +5,83 @@ import toObject from 'to-object-x';
 import assertIsFunction from 'assert-is-function-x';
 import toBoolean from 'to-boolean-x';
 import requireObjectCoercible from 'require-object-coercible-x';
+import methodize from 'simple-methodize-x';
 
 const rr = [].reduceRight;
-const nativeReduceR = typeof rr === 'function' && rr;
+const nativeReduceR = typeof rr === 'function' && methodize(rr);
 
 const test1 = function test1() {
-  return attempt.call([], nativeReduceR, function attemptee(acc) {
-    return acc;
+  return attempt(function attemptee() {
+    return nativeReduceR([], function iteratee(acc) {
+      return acc;
+    });
   }).threw;
 };
 
 const test2 = function test2() {
-  const res = attempt.call(
-    toObject('abc'),
-    nativeReduceR,
-    function attemptee(acc, c) {
-      return acc + c;
-    },
-    'x',
-  );
+  const res = attempt(function attemptee() {
+    return nativeReduceR(
+      toObject('abc'),
+      function iteratee(acc, c) {
+        return acc + c;
+      },
+      'x',
+    );
+  });
 
   return res.threw === false && res.value === 'xcba';
 };
 
 const test3 = function test3() {
-  const res = attempt.call(
-    (function getArgs() {
+  const res = attempt(function attemptee() {
+    const args = (function getArgs() {
       /* eslint-disable-next-line prefer-rest-params */
       return arguments;
-    })(1, 2, 3),
-    nativeReduceR,
-    function attemptee(acc, arg) {
-      return acc + arg;
-    },
-    1,
-  );
+    })(1, 2, 3);
+
+    return nativeReduceR(
+      args,
+      function iteratee(acc, arg) {
+        return acc + arg;
+      },
+      1,
+    );
+  });
 
   return res.threw === false && res.value === 7;
 };
 
 const test4 = function test4() {
-  const res = attempt.call(
-    {0: 1, 1: 2, 3: 3, 4: 4, length: 4},
-    nativeReduceR,
-    function attemptee(acc, arg) {
-      return acc + arg;
-    },
-    2,
-  );
+  const res = attempt(function attemptee() {
+    return nativeReduceR(
+      {0: 1, 1: 2, 3: 3, 4: 4, length: 4},
+      function iteratee(acc, arg) {
+        return acc + arg;
+      },
+      2,
+    );
+  });
 
   return res.threw === false && res.value === 8;
 };
 
-const test5 = function test5() {
-  const doc = typeof document !== 'undefined' && document;
+const doc = typeof document !== 'undefined' && document;
 
+const iteratee5 = function iteratee5(acc, node) {
+  acc[acc.length] = node;
+
+  return acc;
+};
+
+const test5 = function test5() {
   if (doc) {
     const fragment = doc.createDocumentFragment();
     const div = doc.createElement('div');
     fragment.appendChild(div);
 
-    const attemptee = function attemptee(acc, node) {
-      acc[acc.length] = node;
-
-      return acc;
-    };
-
-    const res = attempt.call(fragment.childNodes, nativeReduceR, attemptee, []);
+    const res = attempt(function attemptee() {
+      return nativeReduceR(fragment.childNodes, iteratee5, []);
+    });
 
     return res.threw === false && res.value.length === 1 && res.value[0] === div;
   }
@@ -80,9 +90,11 @@ const test5 = function test5() {
 };
 
 const test6 = function test6() {
-  const res = attempt.call('ab', nativeReduceR, function attemptee() {
-    /* eslint-disable-next-line prefer-rest-params */
-    return arguments[3];
+  const res = attempt(function attemptee() {
+    return nativeReduceR('ab', function iteratee() {
+      /* eslint-disable-next-line prefer-rest-params */
+      return arguments[3];
+    });
   });
 
   return res.threw === false && typeof res.value === 'object';
@@ -95,14 +107,10 @@ const isWorking = toBoolean(nativeReduceR) && test1() && test2() && test3() && t
 
 const patchedReduceRight = function reduceRight(array, callBack /* , initialValue */) {
   requireObjectCoercible(array);
-  const args = [assertIsFunction(callBack)];
+  assertIsFunction(callBack);
 
-  if (arguments.length > 2) {
-    /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
-    args[1] = arguments[2];
-  }
-
-  return nativeReduceR.apply(array, args);
+  /* eslint-disable-next-line prefer-rest-params */
+  return arguments.length > 2 ? nativeReduceR(array, callBack, arguments[2]) : nativeReduceR(array, callBack);
 };
 
 export const implementation = function reduceRight(array, callBack /* , initialValue */) {

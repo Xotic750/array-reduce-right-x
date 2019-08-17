@@ -7,59 +7,71 @@ import toObject from 'to-object-x';
 import assertIsFunction from 'assert-is-function-x';
 import toBoolean from 'to-boolean-x';
 import requireObjectCoercible from 'require-object-coercible-x';
+import methodize from 'simple-methodize-x';
 var rr = [].reduceRight;
-var nativeReduceR = typeof rr === 'function' && rr;
+var nativeReduceR = typeof rr === 'function' && methodize(rr);
 
 var test1 = function test1() {
-  return attempt.call([], nativeReduceR, function attemptee(acc) {
-    return acc;
+  return attempt(function attemptee() {
+    return nativeReduceR([], function iteratee(acc) {
+      return acc;
+    });
   }).threw;
 };
 
 var test2 = function test2() {
-  var res = attempt.call(toObject('abc'), nativeReduceR, function attemptee(acc, c) {
-    return acc + c;
-  }, 'x');
+  var res = attempt(function attemptee() {
+    return nativeReduceR(toObject('abc'), function iteratee(acc, c) {
+      return acc + c;
+    }, 'x');
+  });
   return res.threw === false && res.value === 'xcba';
 };
 
 var test3 = function test3() {
-  var res = attempt.call(function getArgs() {
-    /* eslint-disable-next-line prefer-rest-params */
-    return arguments;
-  }(1, 2, 3), nativeReduceR, function attemptee(acc, arg) {
-    return acc + arg;
-  }, 1);
+  var res = attempt(function attemptee() {
+    var args = function getArgs() {
+      /* eslint-disable-next-line prefer-rest-params */
+      return arguments;
+    }(1, 2, 3);
+
+    return nativeReduceR(args, function iteratee(acc, arg) {
+      return acc + arg;
+    }, 1);
+  });
   return res.threw === false && res.value === 7;
 };
 
 var test4 = function test4() {
-  var res = attempt.call({
-    0: 1,
-    1: 2,
-    3: 3,
-    4: 4,
-    length: 4
-  }, nativeReduceR, function attemptee(acc, arg) {
-    return acc + arg;
-  }, 2);
+  var res = attempt(function attemptee() {
+    return nativeReduceR({
+      0: 1,
+      1: 2,
+      3: 3,
+      4: 4,
+      length: 4
+    }, function iteratee(acc, arg) {
+      return acc + arg;
+    }, 2);
+  });
   return res.threw === false && res.value === 8;
 };
 
-var test5 = function test5() {
-  var doc = typeof document !== 'undefined' && document;
+var doc = typeof document !== 'undefined' && document;
 
+var iteratee5 = function iteratee5(acc, node) {
+  acc[acc.length] = node;
+  return acc;
+};
+
+var test5 = function test5() {
   if (doc) {
     var fragment = doc.createDocumentFragment();
     var div = doc.createElement('div');
     fragment.appendChild(div);
-
-    var attemptee = function attemptee(acc, node) {
-      acc[acc.length] = node;
-      return acc;
-    };
-
-    var res = attempt.call(fragment.childNodes, nativeReduceR, attemptee, []);
+    var res = attempt(function attemptee() {
+      return nativeReduceR(fragment.childNodes, iteratee5, []);
+    });
     return res.threw === false && res.value.length === 1 && res.value[0] === div;
   }
 
@@ -67,9 +79,11 @@ var test5 = function test5() {
 };
 
 var test6 = function test6() {
-  var res = attempt.call('ab', nativeReduceR, function attemptee() {
-    /* eslint-disable-next-line prefer-rest-params */
-    return arguments[3];
+  var res = attempt(function attemptee() {
+    return nativeReduceR('ab', function iteratee() {
+      /* eslint-disable-next-line prefer-rest-params */
+      return arguments[3];
+    });
   });
   return res.threw === false && _typeof(res.value) === 'object';
 }; // ES5 15.4.4.22
@@ -83,14 +97,10 @@ var patchedReduceRight = function reduceRight(array, callBack
 /* , initialValue */
 ) {
   requireObjectCoercible(array);
-  var args = [assertIsFunction(callBack)];
+  assertIsFunction(callBack);
+  /* eslint-disable-next-line prefer-rest-params */
 
-  if (arguments.length > 2) {
-    /* eslint-disable-next-line prefer-rest-params,prefer-destructuring */
-    args[1] = arguments[2];
-  }
-
-  return nativeReduceR.apply(array, args);
+  return arguments.length > 2 ? nativeReduceR(array, callBack, arguments[2]) : nativeReduceR(array, callBack);
 };
 
 export var implementation = function reduceRight(array, callBack
